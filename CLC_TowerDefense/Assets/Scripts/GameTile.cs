@@ -21,6 +21,15 @@ public class GameTile : MonoBehaviour
     // 만약 distance가 값을 초기화했다면, path가 있다고 간주
     public bool HasPath => distance != int.MaxValue;
 
+    // 각 타일의 회전에 대한 성분
+    static Quaternion
+        northRotation = Quaternion.Euler(90f, 0f, 0f),
+        southRotation = Quaternion.Euler(90f, 180f, 0f),
+        eastRotation = Quaternion.Euler(90f, 90f, 0f),
+        westRotation = Quaternion.Euler(90f, 270f, 0f);
+
+    public bool IsAlternative { get; set; }
+
     public static void MakeEastWestNeighbors(GameTile east, GameTile west)
     {
         // 첫 인자가 true인지 확인
@@ -71,5 +80,22 @@ public class GameTile : MonoBehaviour
         neighbor.distance = distance + 1;
         neighbor.nextOnPath = this;
         return neighbor;
+    }
+
+    // 주어진 경로에 따라 회전을 시키는 메서드
+    public void ShowPath()
+    {
+        // 만약 destination이라면 화살표를 제거
+        if(distance == 0)
+        {
+            arrow.gameObject.SetActive(false);
+            return;
+        }
+        arrow.gameObject.SetActive(true);
+        arrow.localRotation =
+            nextOnPath == north ? northRotation :
+            nextOnPath == south ? southRotation :
+            nextOnPath == east ? eastRotation :
+            westRotation;
     }
 }
