@@ -28,8 +28,10 @@ public class GameBoard : MonoBehaviour
 
         for(int y=0, i=0; y < size.y; y++)
         {
-            for(int x=0; x < size.x; x++, i++)
+            for (int x=0; x < size.x; x++, i++)
             {
+
+                // 가장 최근에 생성된 타일
                 GameTile tile = tiles[i] =  Instantiate(tilePrefab);
                 
                 tile.transform.SetParent(transform, false);
