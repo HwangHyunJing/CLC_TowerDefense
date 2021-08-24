@@ -30,6 +30,7 @@ public class GameTile : MonoBehaviour
 
     public bool IsAlternative { get; set; }
 
+
     public static void MakeEastWestNeighbors(GameTile east, GameTile west)
     {
         // 첫 인자가 true인지 확인

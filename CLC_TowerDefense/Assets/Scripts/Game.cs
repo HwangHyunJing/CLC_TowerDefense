@@ -12,6 +12,10 @@ public class Game : MonoBehaviour
     [SerializeField]
     GameBoard board = default;
 
+    // tile의 타입을 정하는 팩토리
+    [SerializeField]
+    GameTileContentFactory tileContentFactory = default;
+
     private void Awake()
     {
         // Game Board의 크기를 초기화
