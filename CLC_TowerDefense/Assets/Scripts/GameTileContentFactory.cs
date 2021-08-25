@@ -19,6 +19,7 @@ public class GameTileContentFactory : ScriptableObject
         Destroy(content.gameObject);
     }
 
+    // prefab을 기반으로 생성한 물체를 scene에 넣음
     GameTileContent Get(GameTileContent prefab)
     {
         GameTileContent instance = Instantiate(prefab);

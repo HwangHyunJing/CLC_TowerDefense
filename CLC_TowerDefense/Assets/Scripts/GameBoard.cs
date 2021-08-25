@@ -112,4 +112,23 @@ public class GameBoard : MonoBehaviour
             tile.ShowPath();
         }
     }
+
+    // 타일의 가리킴에 대한 메서드
+    public GameTile GetTile (Ray ray)
+    {
+        if(Physics.Raycast(ray, out RaycastHit hit))
+        {
+            // return null;
+            int x = (int)(hit.point.x + size.x * .5f);
+            int y = (int)(hit.point.z + size.y * .5f);
+            
+            if(x >= 0 && x < size.x && y >= 0 && y < size.y)
+            {
+                return tiles[x + y * size.x];
+            }
+        }
+
+        // 아무것도 감지되지 않은 경우
+        return null;
+    }
 }
