@@ -29,7 +29,7 @@ public class GameBoard : MonoBehaviour
 
         // 여기서 offset은 game board의 중간이고,
         // 6.1: 1.4 기준 size의 값은 11이다
-        Vector2 offset = new Vector2((size.x - 1) *.5f, (size.y - 1) * .5f);
+        Vector2 offset = new Vector2((size.x - 1) * .5f, (size.y - 1) * .5f);
 
         tiles = new GameTile[size.x * size.y];
 
@@ -71,8 +71,7 @@ public class GameBoard : MonoBehaviour
             }
         }
 
-        // 모든 파일이 경로를 찾도록 하는 메서드
-        // FindPaths();
+        // 하나의 타일을 초기화시킴 (Find Paths는 Toggle 메서드 안에서 기능하므로 생략)
         ToggleDestination(tiles[tiles.Length / 2]);
     }
 
