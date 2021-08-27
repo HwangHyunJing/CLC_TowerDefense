@@ -30,6 +30,26 @@ public class GameTile : MonoBehaviour
 
     public bool IsAlternative { get; set; }
 
+    // game tile의 내용에 직접 접근하기 위한 변수
+    GameTileContent content;
+
+    public GameTileContent Content
+    {
+        get => content;
+        set
+        {
+            // content값이 존재하는지 확인
+            Debug.Assert(value != null, "Null assigned to content!");
+
+            // 이미 content가 존재한다면, 신규 content 오브젝트 파괴
+            if(content != null)
+            {
+                content.Recycle();
+            }
+            content = value;
+            content.transform.localPosition = transform.localPosition;
+        }
+    }
 
     public static void MakeEastWestNeighbors(GameTile east, GameTile west)
     {

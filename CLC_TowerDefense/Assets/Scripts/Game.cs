@@ -16,10 +16,22 @@ public class Game : MonoBehaviour
     [SerializeField]
     GameTileContentFactory tileContentFactory = default;
 
+    // 플레이어의 입력값을 위한 레이
+    Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
+
     private void Awake()
     {
         // Game Board의 크기를 초기화
-        board.Initialize(boardSize);
+        board.Initialize(boardSize, tileContentFactory);
+    }
+
+    private void Update()
+    {
+        // 마우스의 입력(좌클)이 있었는지 확인
+        if(Input.GetMouseButtonDown(0))
+        {
+            HandleTouch();
+        }
     }
 
     private void OnValidate()
@@ -31,6 +43,17 @@ public class Game : MonoBehaviour
         if(boardSize.y < 2)
         {
             boardSize.y = 2;
+        }
+    }
+
+    // 마우스의 입력이 있었을 경우 content의 값에 접근한다
+    void HandleTouch()
+    {
+        GameTile tile = board.GetTile(TouchRay);
+        if(tile != null)
+        {
+            // tile.Content = tileContentFactory.Get(GameTileContentType.Destination);
+            board.ToggleDestination(tile);
         }
     }
 }

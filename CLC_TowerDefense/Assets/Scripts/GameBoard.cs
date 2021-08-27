@@ -18,9 +18,13 @@ public class GameBoard : MonoBehaviour
     // 너비 우선 탐색을 위한 큐
     Queue<GameTile> searchFrontier = new Queue<GameTile>();
 
-    public void Initialize(Vector2Int size)
+    GameTileContentFactory contentFactory;
+
+    public void Initialize(Vector2Int size, GameTileContentFactory contentFactory)
     {
         this.size = size;
+        this.contentFactory = contentFactory;
+
         ground.localScale = new Vector3(size.x, size.y, 1f);
 
         // 여기서 offset은 game board의 중간이고,
@@ -61,25 +65,39 @@ public class GameBoard : MonoBehaviour
                 {
                     tile.IsAlternative = !tile.IsAlternative;
                 }
+
+                // 
+                tile.Content = contentFactory.Get(GameTileContentType.Empty);
             }
         }
 
         // 모든 파일이 경로를 찾도록 하는 메서드
-        FindPaths();
+        // FindPaths();
+        ToggleDestination(tiles[tiles.Length / 2]);
     }
 
-    void FindPaths()
+    bool FindPaths()
     {
         // 각 타일의 모든 경로를 초기화
         foreach(GameTile tile in tiles)
         {
-            tile.ClearPath();
+            // 해당 타일이 destination 이라면 우선 queue에 넣음
+            if(tile.Content.Type == GameTileContentType.Destination)
+            {
+                tile.BecomeDestination();
+                searchFrontier.Enqueue(tile);
+            }
+            else
+            {
+                tile.ClearPath();
+            }
         }
 
-        // 특정 타일을 destination으로 삼음
-        tiles[tiles.Length / 2].BecomeDestination();
-        // destination 정보를 큐에 입력
-        searchFrontier.Enqueue(tiles[tiles.Length / 2]);
+        // destination이 없다면 search Fonriter가 비어있을 것이므로
+        if(searchFrontier.Count == 0)
+        {
+            return false;
+        }
 
         // destination을 기반으로 단일 경로 만들기
         while (searchFrontier.Count > 0)
@@ -111,6 +129,8 @@ public class GameBoard : MonoBehaviour
         {
             tile.ShowPath();
         }
+
+        return true;
     }
 
     // 타일의 가리킴에 대한 메서드
@@ -130,5 +150,29 @@ public class GameBoard : MonoBehaviour
 
         // 아무것도 감지되지 않은 경우
         return null;
+    }
+
+    // destination의 true/false 상태를 바꾸는 메서드
+    public void ToggleDestination(GameTile tile)
+    {
+        // destination 타입인 경우 empty를 부여
+        if(tile.Content.Type == GameTileContentType.Destination)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Empty);
+            // 이후 다시 경로를 설정해준다
+            // FindPaths();
+
+            if(!FindPaths())
+            {
+                tile.Content =
+                    contentFactory.Get(GameTileContentType.Destination);
+                FindPaths();
+            }
+        }
+        else
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Destination);
+            FindPaths();
+        }
     }
 }

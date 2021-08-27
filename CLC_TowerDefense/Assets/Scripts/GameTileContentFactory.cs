@@ -16,6 +16,9 @@ public class GameTileContentFactory : ScriptableObject
     public void Reclaim(GameTileContent content)
     {
         Debug.Assert(content.OriginFactory == this, "Wrong factory reclaimed!");
+        // Debug.Log("name of the object: " + content.gameObject.name);
+
+        // 중복되는 위치에 동일 오브젝트를 생성할 경우, 신규 오브젝트를 제거
         Destroy(content.gameObject);
     }
 
