@@ -27,10 +27,15 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
-        // 마우스의 입력(좌클)이 있었는지 확인
+        // 주요한 동작(wall 생성)
         if(Input.GetMouseButtonDown(0))
         {
             HandleTouch();
+        }
+        // 보조 동작(destination 생성)
+        else if(Input.GetMouseButtonDown(1))
+        {
+            HandleAlternativeTouch();
         }
     }
 
@@ -46,14 +51,25 @@ public class Game : MonoBehaviour
         }
     }
 
-    // 마우스의 입력이 있었을 경우 content의 값에 접근한다
+    // 빈 타일을 입력하면 wall로 바꾼다
     void HandleTouch()
     {
         GameTile tile = board.GetTile(TouchRay);
         if(tile != null)
         {
-            // tile.Content = tileContentFactory.Get(GameTileContentType.Destination);
+            board.ToggleWall(tile);
+        }
+    }
+
+    
+    void HandleAlternativeTouch()
+    {
+        GameTile tile = board.GetTile(TouchRay);
+        if(tile != null)
+        {
             board.ToggleDestination(tile);
         }
     }
+
+
 }

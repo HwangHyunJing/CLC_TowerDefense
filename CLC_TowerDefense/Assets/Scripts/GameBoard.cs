@@ -159,7 +159,6 @@ public class GameBoard : MonoBehaviour
         {
             tile.Content = contentFactory.Get(GameTileContentType.Empty);
             // 이후 다시 경로를 설정해준다
-            // FindPaths();
 
             if(!FindPaths())
             {
@@ -168,10 +167,29 @@ public class GameBoard : MonoBehaviour
                 FindPaths();
             }
         }
-        else
+        else if(tile.Content.Type == GameTileContentType.Empty)
         {
             tile.Content = contentFactory.Get(GameTileContentType.Destination);
             FindPaths();
         }
     }
+
+    // wall의 true/false 상태를 바꾸는 메서드
+    public void ToggleWall (GameTile tile)
+    {
+        if(tile.Content.Type == GameTileContentType.Wall)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Empty);
+            FindPaths();
+        }
+        else if(tile.Content.Type == GameTileContentType.Empty)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Wall);
+            if(!FindPaths())
+            {
+                tile.Content = contentFactory.Get(GameTileContentType.Empty);
+                FindPaths();
+            }
+        }
+    }    
 }
