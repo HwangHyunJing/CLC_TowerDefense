@@ -20,6 +20,32 @@ public class GameBoard : MonoBehaviour
 
     GameTileContentFactory contentFactory;
 
+    // 각 타일의 경로를 보이게 할 것인지 여부
+    bool showPaths;
+
+    public bool ShowPaths
+    {
+        get => showPaths;
+        set
+        {
+            showPaths = value;
+            if (showPaths)
+            {
+                foreach (GameTile tile in tiles)
+                {
+                    tile.ShowPath();
+                }
+            }
+            else
+            {
+                foreach (GameTile tile in tiles)
+                {
+                    tile.HidePath();
+                }
+            }
+        }
+    }
+
     public void Initialize(Vector2Int size, GameTileContentFactory contentFactory)
     {
         this.size = size;
@@ -123,10 +149,22 @@ public class GameBoard : MonoBehaviour
             }
         }
 
-        // path 생성이 끝난 뒤, 화살표를 통해 경로 가시화
+        // 모든 타일을 검사, 만약 고립된 경로의 타일이 존재한다면 false로 스탑
         foreach(GameTile tile in tiles)
         {
-            tile.ShowPath();
+            if(!tile.HasPath)
+            {
+                return false;
+            }
+        }
+
+        if(showPaths)
+        {
+            // path 생성이 끝난 뒤, 화살표를 통해 경로 가시화
+            foreach (GameTile tile in tiles)
+            {
+                tile.ShowPath();
+            }
         }
 
         return true;
@@ -191,5 +229,7 @@ public class GameBoard : MonoBehaviour
                 FindPaths();
             }
         }
-    }    
+    }
+
+    
 }

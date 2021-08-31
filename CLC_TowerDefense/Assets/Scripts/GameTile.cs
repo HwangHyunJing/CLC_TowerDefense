@@ -100,7 +100,9 @@ public class GameTile : MonoBehaviour
 
         neighbor.distance = distance + 1;
         neighbor.nextOnPath = this;
-        return neighbor;
+
+        // 이웃 타일이 가용 공간이면 neighbor를, 막힌 wall이라면 null을 리턴
+        return neighbor.Content.Type != GameTileContentType.Wall ? neighbor : null;
     }
 
     // 주어진 경로에 따라 회전을 시키는 메서드
@@ -118,5 +120,10 @@ public class GameTile : MonoBehaviour
             nextOnPath == south ? southRotation :
             nextOnPath == east ? eastRotation :
             westRotation;
+    }
+
+    public void HidePath()
+    {
+        arrow.gameObject.SetActive(false);
     }
 }

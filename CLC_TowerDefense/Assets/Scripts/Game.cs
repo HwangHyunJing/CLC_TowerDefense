@@ -37,6 +37,12 @@ public class Game : MonoBehaviour
         {
             HandleAlternativeTouch();
         }
+
+        // 키보드 입력은 별도이므로 다시 if로 시작
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            board.ShowPaths = !board.ShowPaths;
+        }
     }
 
     private void OnValidate()
