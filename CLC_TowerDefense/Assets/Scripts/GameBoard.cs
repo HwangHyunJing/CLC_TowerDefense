@@ -10,6 +10,9 @@ public class GameBoard : MonoBehaviour
     [SerializeField]
     GameTile tilePrefab = default;
 
+    [SerializeField]
+    Texture2D gridTexture = default;
+
     // 생성한 타일들을 관리
     GameTile[] tiles;
 
@@ -42,6 +45,28 @@ public class GameBoard : MonoBehaviour
                 {
                     tile.HidePath();
                 }
+            }
+        }
+    }
+
+    // 각 타일의 그리드를 보이게 할 것인지 여부
+    bool showGrid;
+    public bool ShowGrid
+    {
+        get => showGrid;
+
+        set
+        {
+            showGrid = value;
+            Material m = ground.GetComponent<MeshRenderer>().material;
+            if(showGrid)
+            {
+                m.mainTexture = gridTexture;
+                m.SetTextureScale("_MainTex", size );
+            }
+            else
+            {
+                m.mainTexture = null;
             }
         }
     }

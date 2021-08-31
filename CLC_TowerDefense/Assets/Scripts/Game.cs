@@ -23,6 +23,9 @@ public class Game : MonoBehaviour
     {
         // Game Board의 크기를 초기화
         board.Initialize(boardSize, tileContentFactory);
+
+        // board의 grid를 활성화
+        board.ShowGrid = true;
     }
 
     private void Update()
@@ -42,6 +45,12 @@ public class Game : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.V))
         {
             board.ShowPaths = !board.ShowPaths;
+        }
+
+        // grid 가시화 여부
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            board.ShowGrid = !board.ShowGrid;
         }
     }
 
