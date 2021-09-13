@@ -23,6 +23,11 @@ public class GameBoard : MonoBehaviour
 
     GameTileContentFactory contentFactory;
 
+    // spawn point에 대한 list
+    List<GameTile> spawnPoints = new List<GameTile>();
+    // spawnpoint의 count에 접근할 수 있게 해줌
+    public int SpawnPointCount => spawnPoints.Count;
+
     // 각 타일의 경로를 보이게 할 것인지 여부
     bool showPaths;
 
@@ -124,6 +129,8 @@ public class GameBoard : MonoBehaviour
 
         // 하나의 타일을 초기화시킴 (Find Paths는 Toggle 메서드 안에서 기능하므로 생략)
         ToggleDestination(tiles[tiles.Length / 2]);
+        // 다른 하나의 타일은 spawn point로 초기화
+        ToggleSpawnPoint(tiles[0]);
     }
 
     bool FindPaths()
@@ -256,5 +263,25 @@ public class GameBoard : MonoBehaviour
         }
     }
 
-    
+    public void ToggleSpawnPoint(GameTile tile)
+    {
+        if(tile.Content.Type == GameTileContentType.SpawnPoint)
+        {
+            if(spawnPoints.Count > 1)
+            {
+                spawnPoints.Remove(tile);
+                tile.Content = contentFactory.Get(GameTileContentType.Empty);
+            }
+        }
+        else if(tile.Content.Type == GameTileContentType.Empty)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.SpawnPoint);
+            spawnPoints.Add(tile);
+        }
+    }
+
+    public GameTile GetSpawnPoint(int index)
+    {
+        return spawnPoints[index];
+    }
 }
