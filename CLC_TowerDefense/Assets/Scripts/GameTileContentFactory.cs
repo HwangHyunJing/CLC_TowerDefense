@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
+// using UnityEngine.SceneManagement;
+
+// GameObjectFactory의 상속을 받음
 
 [CreateAssetMenu]
-public class GameTileContentFactory : ScriptableObject
+public class GameTileContentFactory : GameObjectFactory
 {
-    Scene contentScene;
+    // Scene contentScene;
 
     [SerializeField]
     GameTileContent destinationPrefab = default;
@@ -29,9 +29,10 @@ public class GameTileContentFactory : ScriptableObject
     // prefab을 기반으로 생성한 물체를 scene에 넣음
     GameTileContent Get(GameTileContent prefab)
     {
-        GameTileContent instance = Instantiate(prefab);
+        // 본인이 직접 만들지 않고 부모 호출
+        GameTileContent instance = CreateGameObjectInstance(prefab);
         instance.OriginFactory = this;
-        MoveToFactoryScene(instance.gameObject);
+        // MoveToFactoryScene(instance.gameObject);
         return instance;
     }
 
@@ -51,24 +52,7 @@ public class GameTileContentFactory : ScriptableObject
         return null;
     }
 
-    // 씬으로 옮긴다곤 하는데.. 뭔 소리야
-    void MoveToFactoryScene (GameObject o)
-    {
-        if(!contentScene.isLoaded)
-        {
-            if(Application.isEditor)
-            {
-                contentScene = SceneManager.GetSceneByName(name);
-                if(!contentScene.isLoaded)
-                {
-                    contentScene = SceneManager.CreateScene(name);
-                }
-            }
-            else
-            {
-                contentScene = SceneManager.CreateScene(name);
-            }
-        }
-        SceneManager.MoveGameObjectToScene(o, contentScene);
-    }
+    // 부모에서 처리
+    // void MoveToFactoryScene (GameObject o)
+
 }
