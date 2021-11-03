@@ -16,6 +16,12 @@ public class Game : MonoBehaviour
     [SerializeField]
     GameTileContentFactory tileContentFactory = default;
 
+    [SerializeField]
+    EnemyFactory enemyFactory = default;
+    [SerializeField, Range(.1f, 10f)]
+    float spawnSpeed = 1f;
+    float spawnProgress = 0f;
+
     // 플레이어의 입력값을 위한 레이
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -51,6 +57,14 @@ public class Game : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.G))
         {
             board.ShowGrid = !board.ShowGrid;
+        }
+
+        // 일정 시간마다 적을 스폰
+        spawnProgress += spawnSpeed * Time.deltaTime;
+        while(spawnProgress >= 1f)
+        {
+            spawnProgress -= 1f;
+            SpawnEnemy();
         }
     }
 
@@ -92,6 +106,14 @@ public class Game : MonoBehaviour
             }
         }
     }
+
+    void SpawnEnemy()
+    {
+        GameTile spawnPoint = board.GetSpawnPoint(Random.Range(0, board.SpawnPointCount));
+        Enemy enemy = enemyFactory.Get();
+        enemy.SpawnOn(spawnPoint);
+    }
+
 
 
 }
