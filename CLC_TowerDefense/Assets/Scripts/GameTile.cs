@@ -12,6 +12,9 @@ public class GameTile : MonoBehaviour
     // 최종 목적지 타일까지 겨쳐야 할 수
     int distance;
 
+    // Enemy가 경로 이동을 위해 참조하는 부분
+    public GameTile NextTileOnPath => nextOnPath;
+
     // 특정 방향으로 이웃을 생성하기 위한 public 호출
     public GameTile GrowPathNorth() => GrowPathTo(north);
     public GameTile GrowPathSouth() => GrowPathTo(south);

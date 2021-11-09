@@ -22,6 +22,9 @@ public class Game : MonoBehaviour
     float spawnSpeed = 1f;
     float spawnProgress = 0f;
 
+    // 적들의 집합
+    EnemyCollection enemies = new EnemyCollection();
+
     // 플레이어의 입력값을 위한 레이
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -66,6 +69,8 @@ public class Game : MonoBehaviour
             spawnProgress -= 1f;
             SpawnEnemy();
         }
+
+        enemies.GameUpdate();
     }
 
     private void OnValidate()
@@ -112,6 +117,8 @@ public class Game : MonoBehaviour
         GameTile spawnPoint = board.GetSpawnPoint(Random.Range(0, board.SpawnPointCount));
         Enemy enemy = enemyFactory.Get();
         enemy.SpawnOn(spawnPoint);
+
+        enemies.Add(enemy);
     }
 
 
