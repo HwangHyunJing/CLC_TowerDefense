@@ -16,10 +16,10 @@ public class GameTile : MonoBehaviour
     public GameTile NextTileOnPath => nextOnPath;
 
     // 특정 방향으로 이웃을 생성하기 위한 public 호출
-    public GameTile GrowPathNorth() => GrowPathTo(north);
-    public GameTile GrowPathSouth() => GrowPathTo(south);
-    public GameTile GrowPathWest() => GrowPathTo(west);
-    public GameTile GrowPathEast() => GrowPathTo(east);
+    public GameTile GrowPathNorth() => GrowPathTo(north, Direction.South);
+    public GameTile GrowPathSouth() => GrowPathTo(south, Direction.North);
+    public GameTile GrowPathWest() => GrowPathTo(west, Direction.East);
+    public GameTile GrowPathEast() => GrowPathTo(east, Direction.West);
 
     // 만약 distance가 값을 초기화했다면, path가 있다고 간주
     public bool HasPath => distance != int.MaxValue;
@@ -32,6 +32,9 @@ public class GameTile : MonoBehaviour
         westRotation = Quaternion.Euler(90f, 270f, 0f);
 
     public bool IsAlternative { get; set; }
+
+    // 타일의 경로 설정에 따른 타일의 탈출 지점
+    public Vector3 ExitPoint { get; private set; }
 
     // game tile의 내용에 직접 접근하기 위한 변수
     GameTileContent content;
@@ -53,6 +56,8 @@ public class GameTile : MonoBehaviour
             content.transform.localPosition = transform.localPosition;
         }
     }
+
+    public Direction PathDirection { get; private set; }
 
     public static void MakeEastWestNeighbors(GameTile east, GameTile west)
     {
@@ -86,10 +91,11 @@ public class GameTile : MonoBehaviour
     {
         distance = 0;
         nextOnPath = null;
+        ExitPoint = transform.localPosition;
     }
 
     // 인자로 받은 이웃을 자신의 직전 타일로 설정
-    GameTile  GrowPathTo (GameTile neighbor)
+    GameTile  GrowPathTo (GameTile neighbor, Direction direction)
     {
         // 만약 HasPath가 false라면, 에러 출력
         Debug.Assert(HasPath, "No path!");
@@ -103,6 +109,10 @@ public class GameTile : MonoBehaviour
 
         neighbor.distance = distance + 1;
         neighbor.nextOnPath = this;
+
+        neighbor.ExitPoint =
+            (transform.localPosition + neighbor.transform.localPosition) * .5f;
+        neighbor.PathDirection = direction;
 
         // 이웃 타일이 가용 공간이면 neighbor를, 막힌 wall이라면 null을 리턴
         return neighbor.Content.Type != GameTileContentType.Wall ? neighbor : null;

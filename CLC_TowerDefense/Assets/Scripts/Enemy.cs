@@ -10,6 +10,11 @@ public class Enemy : MonoBehaviour
     Vector3 positionFrom, positionTo;
     float progress;
 
+    // 자체적인 rotation을 위한 값
+    Direction direction;
+    DirectionChange directionChange;
+    float directionAngleFrom, directionAngleTo;
+
     public EnemyFactory OriginFactory
     {
         get => originFactory;
@@ -26,9 +31,27 @@ public class Enemy : MonoBehaviour
         Debug.Assert(tile.NextTileOnPath != null, "Nowhere to go!", this);
         tileFrom = tile;
         tileTo = tile.NextTileOnPath;
-        positionFrom = tileFrom.transform.localPosition;
-        positionTo = tileTo.transform.localPosition;
+        
+
         progress = 0f;
+        PrepareIntro();
+    }
+
+    void PrepareIntro()
+    {
+        // 출발지 > 다음 위치로 가는 Exit 받기
+        positionFrom = tileFrom.transform.localPosition;
+        positionTo = tileFrom.ExitPoint;
+
+        // 이동하는 방향 받기
+        direction = tileFrom.PathDirection;
+
+        // 방향 전환 여부에 대한 값 초기화
+        directionChange = DirectionChange.None;
+        // 처음에는 From과 To 사이의 각 차이가 없다 (초기 이동 방향에 일치)
+        directionAngleFrom = directionAngleTo = direction.GetAngle();
+        // Enemy 자체의 rotation도 direction에 맞춰주기
+        transform.localRotation = direction.GetRotation();
     }
 
     public bool GameUpdate()
@@ -45,13 +68,58 @@ public class Enemy : MonoBehaviour
                 OriginFactory.Reclaim(this);
                 return false;
             }
-            positionFrom = positionTo;
-            positionTo = tileTo.transform.localPosition;
+
             progress -= 1f;
+            PrepareNextState();
         }
 
         transform.localPosition =
             Vector3.LerpUnclamped(positionFrom, positionTo, progress);
+        if(directionChange != DirectionChange.None)
+        {
+            float angle = Mathf.LerpUnclamped(
+                directionAngleFrom, directionAngleTo, progress
+            );
+            transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+        }
         return true;
+    }
+
+    void PrepareNextState()
+    {
+        positionFrom = positionTo;
+        positionTo = tileFrom.ExitPoint;
+
+        directionChange = direction.GetDirectionChangeTo(tileFrom.PathDirection);
+        direction = tileFrom.PathDirection;
+        directionAngleFrom = directionAngleTo;
+
+        // direction Change에 따른 방향값 제시
+        switch(directionChange)
+        {
+            case DirectionChange.None: PrepareForward(); break;
+            case DirectionChange.TurnRight: PrepareTurnRight(); break;
+            case DirectionChange.TurnLeft: PrepareTurnLeft(); break;
+            default: PrepareTurnAround(); break;
+        }
+    }
+
+    void PrepareForward()
+    {
+        transform.localRotation = direction.GetRotation();
+        directionAngleTo = direction.GetAngle();
+    }
+
+    void PrepareTurnRight()
+    {
+        directionAngleTo = directionAngleFrom + 90f;
+    }
+    void PrepareTurnLeft()
+    {
+        directionAngleTo = directionAngleFrom - 90f;
+    }
+    void PrepareTurnAround()
+    {
+        directionAngleTo = directionAngleFrom + 180f;
     }
 }
