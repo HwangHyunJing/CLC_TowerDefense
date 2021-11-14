@@ -110,8 +110,10 @@ public class GameTile : MonoBehaviour
         neighbor.distance = distance + 1;
         neighbor.nextOnPath = this;
 
+        // 회전 메커니즘의 변경에 따른 탈출 위치 조정
         neighbor.ExitPoint =
-            (transform.localPosition + neighbor.transform.localPosition) * .5f;
+            neighbor.transform.localPosition + direction.GetHalfVector();
+            // (transform.localPosition + neighbor.transform.localPosition) * .5f;
         neighbor.PathDirection = direction;
 
         // 이웃 타일이 가용 공간이면 neighbor를, 막힌 wall이라면 null을 리턴

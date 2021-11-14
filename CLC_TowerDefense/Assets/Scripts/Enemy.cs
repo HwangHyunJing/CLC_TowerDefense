@@ -15,6 +15,12 @@ public class Enemy : MonoBehaviour
     DirectionChange directionChange;
     float directionAngleFrom, directionAngleTo;
 
+    // 자신의 Model 참조
+    [SerializeField]
+    Transform model = default;
+
+
+
     public EnemyFactory OriginFactory
     {
         get => originFactory;
@@ -73,9 +79,14 @@ public class Enemy : MonoBehaviour
             PrepareNextState();
         }
 
-        transform.localPosition =
-            Vector3.LerpUnclamped(positionFrom, positionTo, progress);
-        if(directionChange != DirectionChange.None)
+        // 회전이 존재하는 경우 보간을 취한다
+        if(directionChange == DirectionChange.None)
+        {
+            transform.localPosition =
+                Vector3.LerpUnclamped(positionFrom, positionTo, progress);
+        }
+        // 회전이 없는 경우 위치에 대해서는 보간을 취하지 않는다
+        else
         {
             float angle = Mathf.LerpUnclamped(
                 directionAngleFrom, directionAngleTo, progress
@@ -108,18 +119,25 @@ public class Enemy : MonoBehaviour
     {
         transform.localRotation = direction.GetRotation();
         directionAngleTo = direction.GetAngle();
+        model.localPosition = Vector3.zero;
     }
 
     void PrepareTurnRight()
     {
         directionAngleTo = directionAngleFrom + 90f;
+        model.localPosition = new Vector3(-.5f, 0f);
+        transform.localPosition = positionFrom + direction.GetHalfVector();
     }
     void PrepareTurnLeft()
     {
         directionAngleTo = directionAngleFrom - 90f;
+        model.localPosition = new Vector3(.5f, 0f);
+        transform.localPosition = positionFrom + direction.GetHalfVector();
     }
     void PrepareTurnAround()
     {
         directionAngleTo = directionAngleFrom + 180f;
+        model.localPosition = Vector3.zero;
+        transform.localPosition = positionFrom;
     }
 }
